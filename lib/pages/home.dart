@@ -17,6 +17,9 @@ Map countryCode = {
   'US': '+ 1',
 };
 
+TextEditingController driverNameController = new TextEditingController();
+TextEditingController driverNumberController = new TextEditingController();
+
 bool hasWritten = false;
 
 String pageMode = 'listMode';
@@ -24,7 +27,7 @@ String pageMode = 'listMode';
 String nfcData = '';
 String writeMessage = '';
 
-String hostURL = 'google.com';
+String hostURL = 'www.metrolinecars.com';
 
 String lastDriver;
 int currentDriverIndex = 0;
@@ -57,14 +60,19 @@ class _HomeState extends State<Home> {
       if (pageMode == 'singles') {
         NDEFMessage newMessage = NDEFMessage.withRecords([
           NDEFRecord.uri(Uri(
-            host: hostURL,
-          ))
+              scheme: 'https',
+              host: hostURL,
+              path: 'job',
+              query:
+                  'driver=${driverNameController.text}&telNo=${driverNumberController.text}'))
         ]);
         message.tag.write(newMessage);
       } else if (pageMode == 'listMode') {
         NDEFMessage newMessage = NDEFMessage.withRecords([
           NDEFRecord.uri(Uri(
+            scheme: 'https',
             host: hostURL,
+            path: 'job',
             query:
                 'driver=${csvDrivers[currentDriverIndex][1] + csvDrivers[currentDriverIndex][2]}&telNo=${csvDrivers[currentDriverIndex][5]}',
           ))
@@ -249,6 +257,7 @@ class _HomeState extends State<Home> {
                                 color: Colors.deepPurpleAccent.withOpacity(0.2),
                               ),
                               child: TextFormField(
+                                controller: driverNameController,
                                 decoration:
                                     InputDecoration(hintText: 'Driver name'),
                               ),
@@ -261,6 +270,7 @@ class _HomeState extends State<Home> {
                                 color: Colors.deepPurpleAccent.withOpacity(0.2),
                               ),
                               child: TextFormField(
+                                controller: driverNumberController,
                                 decoration:
                                     InputDecoration(hintText: 'Driver number'),
                               ),
